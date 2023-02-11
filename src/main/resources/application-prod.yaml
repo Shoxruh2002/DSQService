@@ -1,0 +1,92 @@
+server:
+  port: ${DSQ_APP_PORT:7979}
+spring:
+  codec:
+    max-in-memory-size: 1000KB
+  application:
+    name: ${DSQ_APP_NAME:DSQ_SERVICE}
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  datasource:
+    username: postgres
+    password: 1234
+    url: jdbc:postgresql://localhost:5432/dxmapdb
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
+    groups-order: asc
+    operations-sorter: alpha
+    try-it-out-enabled: true
+    tags-sorter: alpha
+    display-request-duration: true
+  api-docs:
+    path: /api/doc
+queue:
+  name:
+    dsq: cportal_tax_in
+
+api:
+  info:
+    title: Davlat Xaridlari Markaziy Axborot Portali
+    description: Davlat Xaridlari Markaziy Axborot Portali proyektidagi API lar
+    version: 1.2
+    contact-name: Viktor Dimkov
+    contact-email: vd30003vd@mail.ru
+    contact-url: https://t.me/Cor_habe
+    license-name: https://xarid.mf.uz
+    license-url: https://xarid.mf.uz
+dsq:
+  api:
+    user: "$Finance%"
+    password: "m8sxjV&LyT"
+    url:
+      protocol: "https://"
+      domain: "mspd-api.soliq.uz"
+      path:
+        login-api: "/minfin2/api/authenticate/login"
+        juridic-info-api: "/minfin2/finance/get-company"
+        individual-info-api: "/minfin2/finance/get-entrepreneur-data"
+        financial-statements-form-one-api: "/minfin2/finance/get-financial-report-form1"
+        financial-statements-form-two-api: "/minfin2/finance/get-financial-report-form2"
+        doubtful-taxpayer-api: "/nimadr"
+        purchase-info-api: "/minfin2/finance/save/country-purchase-and-member"
+        tax-gap-info-api: "/minfin2/finance/get-company-info-tax-type-data"
+
+tax:
+  excel:
+    url: https://soliq.uz/activities/analysis/download/excel
+
+file:
+  upload-dir: /home/qurbonov/uploads
+
+request:
+  id:
+    file:
+      path: /home/qurbonov/backend/file/requestId.dat
+
+rabbit:
+  dev:
+    username: enkt
+    password: enkt123
+    port: 5672
+    host: dev-rabbit.mf.uz
+  prod:
+    username: cportal
+    password: 2CTrGZusn3R5gxT4LsJT75huwh5DI4YZ
+    port: 5672
+    host: prod-rabbit.mf.uz
+  routing-key:
+    xt-xarid: xt.request
+    uz-ex: uzrtsb.response
+    co-operation: cooper.request
+    shaffof: transbuild.request
+  exchanges:
+    topic-exchange: common
+    fanout-exchange: etp_broadcast
