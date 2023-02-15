@@ -62,6 +62,7 @@ dsq:
         doubtful-taxpayer-api: "/nimadr"
         purchase-info-api: "/nimadr"
         tax-gap-info-api: "nimadr"
+        stock-trading-api: "/minnn"
 
 tax:
   excel:

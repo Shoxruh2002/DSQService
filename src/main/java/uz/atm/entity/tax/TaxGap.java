@@ -1,10 +1,7 @@
 package uz.atm.entity.tax;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import uz.atm.entity.Auditable;
 
 import javax.persistence.Entity;
@@ -18,6 +15,7 @@ import java.util.Date;
 @Entity
 @Getter
 @Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Table( schema = "dsq" )

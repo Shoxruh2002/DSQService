@@ -6,15 +6,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.convert.DtoInstantiatingConverter;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import uz.atm.dto.AppErrorDto;
-import uz.atm.dto.DataDto;
-import uz.atm.dto.FinancialReportFormDto;
-import uz.atm.entity.PurchaseInfo;
+import uz.atm.dto.*;
 import uz.atm.entity.financialReportFormOne.FinancialReportFormOne;
 import uz.atm.entity.financialReportFormTwo.FinancialReportFormTwo;
 import uz.atm.entity.individualInfoResponse.IndividualInfo;
@@ -92,7 +88,7 @@ public class DSQService {
     }
 
 
-    public DataDto<PurchaseInfo> sendPurchaseInfo(PurchaseInfo dto) {
+    public DataDto<PurchaseInfoDto> sendPurchaseInfo(PurchaseInfoDto dto) {
         String endpoint = dsqApiProperties.getUrl().getPath().getPurchaseInfoAPI();
         DataDto<JsonNode> response = dsqCaller.postCall(dto, endpoint, JsonNode.class);
         if ( ! response.success ) {
@@ -103,11 +99,26 @@ public class DSQService {
             JsonNode body = response.body;
             if ( body.get("success").asBoolean() ) {
                 try {
-                    return new DataDto<>(objectMapper.readValue(body.get("data").toString(), PurchaseInfo.class));
+                    return new DataDto<>(objectMapper.readValue(body.get("data").toString(), PurchaseInfoDto.class));
                 } catch ( JsonProcessingException e ) {
                     return new DataDto<>(new AppErrorDto(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR));
                 }
             } else return new DataDto<>(new AppErrorDto("Cause : " + body.get("reason"), HttpStatus.BAD_REQUEST));
+        } else return new DataDto<>(response.error);
+    }
+
+    public DataDto<StockTradingDto> sendStockTrading(StockTradingDto dto) {
+        String endpoint = dsqApiProperties.getUrl().getPath().getStockTradingAPI();
+        DataDto<JsonNode> response = dsqCaller.postCall(dto, endpoint, JsonNode.class);
+        if ( ! response.success ) {
+            dsqCaller.loginCall();
+            response = dsqCaller.postCall(dto, endpoint, JsonNode.class);
+        }
+        if ( response.success ) {
+            JsonNode body = response.body;
+            if ( body.get("success").asBoolean() ) {
+                return new DataDto<>(dto);
+            } else return new DataDto<>(new AppErrorDto("Cause : " + body.get("message"), HttpStatus.BAD_REQUEST));
         } else return new DataDto<>(response.error);
     }
 }

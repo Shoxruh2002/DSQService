@@ -1,23 +1,20 @@
-package uz.atm.entity;
+package uz.atm.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
-
-import javax.persistence.Entity;
-import javax.persistence.Table;
 
 /**
  * Author: Shoxruh Bekpulatov
  * Time: 2/10/23 9:44 AM
  **/
-@Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Table( schema = "dsq" )
-public class PurchaseInfo extends Auditable {
+public class PurchaseInfoDto {
+
+    private Long id;
 
     private String account;
 

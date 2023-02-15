@@ -16,6 +16,7 @@ import java.util.Date;
 @Entity
 @Getter
 @Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(schema = "dsq",name = "juridic_info_update_dsq")

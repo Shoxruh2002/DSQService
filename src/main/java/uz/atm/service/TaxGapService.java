@@ -73,7 +73,7 @@ public class TaxGapService extends AbstractService<TaxGapRepository> {
         } else return new DataDto<>(response.error);
     }
 
-    public DataDto<TaxGapDto> sendTaxGapResponseForEtp(TaxGapRequest request, String type) {
+    public synchronized DataDto<TaxGapDto> sendTaxGapResponseForEtp(TaxGapRequest request, String type) {
         DataDto<TaxGapDto> taxGapFromDSQ = getTaxGapFromDSQ(request.getPayload().getTin());
         if ( taxGapFromDSQ.success ) {
             TaxGapDto taxGapDto = taxGapFromDSQ.body;

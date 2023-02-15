@@ -1,10 +1,8 @@
 package uz.atm.entity.juridicInfo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import net.bytebuddy.build.ToStringPlugin;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -18,6 +16,7 @@ import java.util.Date;
 @Embeddable
 @Getter
 @Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class Company {
