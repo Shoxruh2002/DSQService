@@ -1,10 +1,7 @@
 package uz.atm.entity.juridicInfo;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -17,6 +14,7 @@ import javax.persistence.Embeddable;
 @Embeddable
 @Getter
 @Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class Accountant {

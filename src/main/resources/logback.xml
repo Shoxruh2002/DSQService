@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration>
-    <property name="DEV_HOME" value="./DSQService/logs"/>
+    <property name="DEV_HOME" value="././logs/dsqService"/>
     <property name="APP_NAME" value="DSQService"/>
     <include resource="logback-common.xml"/>
 

@@ -6,7 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.atm.dto.DataDto;
 import uz.atm.dto.FinancialReportFormDto;
-import uz.atm.entity.PurchaseInfo;
+import uz.atm.dto.PurchaseInfoDto;
+import uz.atm.dto.StockTradingDto;
 import uz.atm.entity.financialReportFormOne.FinancialReportFormOne;
 import uz.atm.entity.financialReportFormTwo.FinancialReportFormTwo;
 import uz.atm.entity.individualInfoResponse.IndividualInfo;
@@ -62,9 +63,15 @@ public class DSQController {
     }
 
     @PostMapping( "/sendPurchaseInfo" )
-    public ResponseEntity<DataDto<PurchaseInfo>> sendPurchaseInfo(@Valid @RequestBody PurchaseInfo dto) {
-        DataDto<PurchaseInfo> purchaseInfo = dsqService.sendPurchaseInfo(dto);
+    public ResponseEntity<DataDto<PurchaseInfoDto>> sendPurchaseInfo(@Valid @RequestBody PurchaseInfoDto dto) {
+        DataDto<PurchaseInfoDto> purchaseInfo = dsqService.sendPurchaseInfo(dto);
         return new ResponseEntity<>(purchaseInfo, HttpStatus.OK);
+    }
+
+    @PostMapping( "/sendStockTrading" )
+    public ResponseEntity<DataDto<StockTradingDto>> sendStockTrading(@RequestBody StockTradingDto dto) {
+        DataDto<StockTradingDto> stockTrading = dsqService.sendStockTrading(dto);
+        return new ResponseEntity<>(stockTrading, HttpStatus.OK);
     }
 
 }

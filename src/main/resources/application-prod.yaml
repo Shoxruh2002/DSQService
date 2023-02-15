@@ -58,6 +58,7 @@ dsq:
         doubtful-taxpayer-api: "/nimadr"
         purchase-info-api: "/minfin2/finance/save/country-purchase-and-member"
         tax-gap-info-api: "/minfin2/finance/get-company-info-tax-type-data"
+        stock-trading-api: "/minfin2/api/stock-trading"
 
 tax:
   excel:

@@ -1,9 +1,6 @@
 package uz.atm.entity.juridicInfo;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import uz.atm.entity.Auditable;
 
 import javax.persistence.Entity;
@@ -18,6 +15,7 @@ import javax.persistence.Table;
 @Entity( name = "company_banks" )
 @Getter
 @Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Table( schema = "dsq", name = "company_banks" )

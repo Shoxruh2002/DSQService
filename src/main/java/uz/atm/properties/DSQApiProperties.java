@@ -35,6 +35,7 @@ public class DSQApiProperties {
             private String doubtfulTaxpayerAPI; //Shubhali soliq to'lovchilar haqida malumot oluvchi API
             private String purchaseInfoAPI;  //Davlat xaridlari haqida malumot junatiladigan API
             private String taxGapInfoAPI; // Yuridik shaxslar ni soliq uzulish koeffitsientini beruvchi API
+            private String stockTradingAPI; //Davlat xaridlari haqida malumot junatiladigan API new version
 
         }
     }

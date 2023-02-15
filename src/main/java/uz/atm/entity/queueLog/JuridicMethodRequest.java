@@ -1,10 +1,7 @@
 package uz.atm.entity.queueLog;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import uz.atm.entity.Auditable;
 
 import javax.persistence.Column;
@@ -19,6 +16,7 @@ import javax.persistence.Table;
 @Entity
 @Getter
 @Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class JuridicMethodRequest extends Auditable {
