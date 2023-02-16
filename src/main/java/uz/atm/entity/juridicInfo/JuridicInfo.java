@@ -20,7 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 @JsonIgnoreProperties( ignoreUnknown = true )
-@Table( schema = "dsq", name = "juridic_info_responses_dsq" )
+@Table( schema = "dsq", name = "juridic_info" )
 public class JuridicInfo extends Auditable {
 
     @Embedded

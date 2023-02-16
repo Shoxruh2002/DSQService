@@ -19,6 +19,7 @@ import uz.atm.properties.DSQApiProperties;
 import java.util.Objects;
 
 import static uz.atm.utils.AppUtils.isJWT;
+import static uz.atm.utils.AppUtils.writeValueAsString;
 
 /**
  * Author: Bekpulatov Shoxruh
@@ -107,7 +108,7 @@ public class DSQCaller {
                     .block();
             return new DataDto<>(response);
         } catch ( Exception e ) {
-            log.error("Exception Occurred calling DSQ : Request : {} ; Cause {}", body.toString(), e.getMessage());
+            log.error("Exception Occurred calling DSQ : Request : {} ; Cause {}", writeValueAsString(body), e.getMessage());
             return new DataDto<>(new AppErrorDto(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR));
         }
     }
@@ -125,7 +126,7 @@ public class DSQCaller {
                     .block();
             return new DataDto<>(response);
         } catch ( Exception e ) {
-            log.error("Exception Occurred calling DSQ : Request : {} ; Cause {}", body.toString(), e.getMessage());
+            log.error("Exception Occurred calling DSQ : Request : {} ; Cause {}", writeValueAsString(body), e.getMessage());
             return new DataDto<>(new AppErrorDto(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR));
         }
     }

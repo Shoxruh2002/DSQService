@@ -15,6 +15,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import uz.atm.properties.DSQApiProperties;
 import uz.atm.properties.OpenApiProperties;
 import uz.atm.properties.RabbitMQProperties;
+import uz.atm.repository.FoundersRepository;
+import uz.atm.repository.JuridicInfoRepository;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -43,11 +45,15 @@ import static uz.atm.utils.AppUtils.longToBytes;
 public class BaseConfig {
 
     private final DSQApiProperties dsqApiProperties;
+    private final FoundersRepository foundersRepository;
+    private final JuridicInfoRepository repository;
     @Value( "${request.id.file.path}" )
     private String filePath;
 
-    public BaseConfig(DSQApiProperties dsqApiProperties) {
+    public BaseConfig(DSQApiProperties dsqApiProperties, FoundersRepository foundersRepository, JuridicInfoRepository repository) {
         this.dsqApiProperties = dsqApiProperties;
+        this.foundersRepository = foundersRepository;
+        this.repository = repository;
     }
 
     @PostConstruct
@@ -78,10 +84,7 @@ public class BaseConfig {
     @Bean
     public void run() throws Exception {
         CommandLineRunner runner = (a) -> {
-//            Optional<FacturaInfo> byId = facturalInfoRepository.findById(2343L);
-//            FacturaInfo facturaInfo = byId.get();
-//            List<Records> records = facturaInfo.getPayload().getRecords();
-//            String s = new ObjectMapper().writeValueAsString(records);
+//            foundersRepository.deleteAllByCompanyTin(200000034L);
         };
         runner.run("s", "b"
         );

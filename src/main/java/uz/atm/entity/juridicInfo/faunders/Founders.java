@@ -20,6 +20,8 @@ public class Founders extends Auditable {
 
     private String dsqId;
 
+    private Long companyTin;
+
     @Embedded
     private FounderIndividual founderIndividual;
 

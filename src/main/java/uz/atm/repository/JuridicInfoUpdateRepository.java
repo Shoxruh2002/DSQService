@@ -3,7 +3,6 @@ package uz.atm.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import uz.atm.entity.juridicInfo.JuridicInfoUpdate;
 
@@ -13,7 +12,7 @@ import uz.atm.entity.juridicInfo.JuridicInfoUpdate;
  **/
 public interface JuridicInfoUpdateRepository extends JpaRepository<JuridicInfoUpdate, Long> {
 
-    @Transactional( propagation = Propagation.REQUIRES_NEW )
+    @Transactional
     @Modifying
     @Query( "update JuridicInfoUpdate j set j.updated = ?2 where j.id=?1" )
     void updateById(Long id, boolean updated);

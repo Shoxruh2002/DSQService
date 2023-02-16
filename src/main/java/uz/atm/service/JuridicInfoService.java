@@ -3,12 +3,9 @@ package uz.atm.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.webjars.NotFoundException;
-import uz.atm.dto.AppErrorDto;
 import uz.atm.dto.DataDto;
 import uz.atm.dto.JuridicInfoUpdateDto;
 import uz.atm.dto.etp.JuridicInfoEtpRequest;
@@ -61,41 +58,52 @@ public class JuridicInfoService extends AbstractService<JuridicInfoRepository> {
         return repository.findByCompany_Tin(tin);
     }
 
-    public JuridicInfo save(JuridicInfo juridicInfo) {
+    public JuridicInfo save(JuridicInfo juridicInfo, List<Founders> founders) {
+        Long tin = juridicInfo.getCompany().getTin();
+        foundersRepository.deleteAllByCompanyTin(tin);
+        List<Founders> list = founders.stream().peek(p -> p.setCompanyTin(tin)).toList();
+        foundersRepository.saveAll(list);
         return repository.save(juridicInfo);
     }
 
-    public JuridicInfo update(JuridicInfo juridicInfo) {
-        Optional<JuridicInfo> byCompanyTin = repository.findByCompany_Tin(juridicInfo.getCompany().getTin());
+    public JuridicInfo update(JuridicInfo juridicInfo, List<Founders> founders) {
+        Long companyTin = juridicInfo.getCompany().getTin();
+        Optional<JuridicInfo> byCompanyTin = repository.findByCompany_Tin(companyTin);
         if ( byCompanyTin.isPresent() ) {
+            foundersRepository.deleteAllByCompanyTin(companyTin);
+            List<Founders> list = founders.stream().peek(p -> p.setCompanyTin(juridicInfo.getCompany().getTin())).toList();
+            foundersRepository.saveAll(list);
             juridicInfo.setId(byCompanyTin.get().getId());
             return repository.save(juridicInfo);
+        } else {
+            log.error(" While updating Juridic Info not found with tin : " + companyTin);
+            return this.save(juridicInfo, founders);
         }
-        throw new NotFoundException(" While updating Juridic Info not found with tin : " + juridicInfo.getCompany().getTin());
     }
-
 
     public boolean updateFromDsq(JuridicInfoUpdateDto dto) {
         Long tin = dto.getData().getTin();
         String sendType = dto.getSendType();
         DataDto<JuridicInfo> juridicEntityInfo = this.getJuridicEntityInfo(tin);
-        if ( juridicEntityInfo.success ) {
-            this.update(juridicEntityInfo.body, sendType);
+        DataDto<List<Founders>> founders = this.getFounders(tin.toString());
+        if ( juridicEntityInfo.success && founders.success ) {
+            this.update(juridicEntityInfo.body, founders.body, sendType);
             return true;
-        } else return false;
+        } else {
+            log.error("Error occurred updating juridicInfoEntity and founders with Cause JuridicInfo : {}; Cause Founders : {}", juridicEntityInfo.error.toString(), founders.error.toString());
+            return false;
+        }
     }
 
-    private void update(JuridicInfo dto, String sendType) {
+    private void update(JuridicInfo dto, List<Founders> founders, String sendType) {
         switch ( sendType ) {
-            case "CREATE" -> this.save(dto);
-            case "UPDATE" -> this.update(dto);
+            case "CREATE" -> this.save(dto, founders);
+            case "UPDATE" -> this.update(dto, founders);
         }
     }
 
 
-    public DataDto<JuridicInfo> getJuridicEntityInfo(Long tin) {
-        if ( tin.toString().length() != 9 )
-            return new DataDto<>(new AppErrorDto("Tin must be contains 9 numbers", HttpStatus.BAD_REQUEST));
+    public synchronized DataDto<JuridicInfo> getJuridicEntityInfo(Long tin) {
         String endpoint = dsqApiProperties.getUrl().getPath().getJuridicInfoAPI();
         LinkedMultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("tin", tin.toString());
@@ -108,7 +116,7 @@ public class JuridicInfoService extends AbstractService<JuridicInfoRepository> {
     }
 
 
-    public DataDto<List<Founders>> getFounders(String tin) {
+    public synchronized DataDto<List<Founders>> getFounders(String tin) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("tin", tin);// TODO: 2/9/23 Should optimize
         DataDto<List<Founders>> dataDto = dsqCaller.getCall(params, "minfin2/api/get/founders-by-tin", new ParameterizedTypeReference<>() {
@@ -116,7 +124,6 @@ public class JuridicInfoService extends AbstractService<JuridicInfoRepository> {
         if ( ! dataDto.success )
             dsqCaller.getCall(params, "minfin2/api/get/founders-by-tin", new ParameterizedTypeReference<>() {
             });
-        foundersRepository.saveAll(dataDto.body);
         return dataDto;
     }
 
@@ -128,9 +135,10 @@ public class JuridicInfoService extends AbstractService<JuridicInfoRepository> {
             JuridicInfoEtpResponse etpResponse = new JuridicInfoEtpResponse(dto.getEtpId(), dto.getRequestId(), getRequestResponseIdFromFile(getRequestFilePath), dto.getMethodName());
             DataDto<JuridicInfo> juridicEntityInfo = this.getJuridicEntityInfo(f);
             DataDto<List<Founders>> founders = this.getFounders(String.valueOf(f));
-            if ( founders.success && juridicEntityInfo.success )
-                etpResponse.setPayload(new JuridicInfoEtpResponse.Payload("SUCCESS", null, juridicEntityInfo.body, founders.body));
-            else {
+            if ( founders.success && juridicEntityInfo.success ) {
+                List<Founders> list = founders.body.stream().peek(p -> p.setCompanyTin(juridicEntityInfo.body.getCompany().getTin())).toList();
+                etpResponse.setPayload(new JuridicInfoEtpResponse.Payload("SUCCESS", null, juridicEntityInfo.body, list));
+            } else {
                 StringBuilder errMsg = new StringBuilder("Something went wrong with tin : ").append(f).append("; ");
                 if ( ! founders.success ) errMsg.append("Cause 1 : ").append(founders.error.getMessage());
                 if ( ! juridicEntityInfo.success )
@@ -151,6 +159,4 @@ public class JuridicInfoService extends AbstractService<JuridicInfoRepository> {
     public void saveJuridicMethodResponse(JuridicInfoEtpResponse dto) {
         juridicMethodResponseRepository.save(new JuridicMethodResponse(dto.getEtpId(), dto.getRequestId(), dto.getResponseId(), dto.getMethodName(), dto.getPayload().toString()));
     }
-
-
 }

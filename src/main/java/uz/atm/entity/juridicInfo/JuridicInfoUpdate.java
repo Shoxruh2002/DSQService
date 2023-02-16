@@ -19,7 +19,7 @@ import java.util.Date;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(schema = "dsq",name = "juridic_info_update_dsq")
+@Table(schema = "dsq",name = "juridic_info_update")
 public class JuridicInfoUpdate extends Auditable {
 
     private String sendType;

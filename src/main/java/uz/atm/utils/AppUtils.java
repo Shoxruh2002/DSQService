@@ -1,5 +1,7 @@
 package uz.atm.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,6 +15,7 @@ import java.nio.channels.OverlappingFileLockException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.Objects;
 import java.util.Random;
 
 
@@ -85,6 +88,15 @@ public class AppUtils {
         buffer.put(bytes, 0, bytes.length);
         buffer.flip();
         return buffer.getLong();
+    }
+
+    public static String writeValueAsString(Object o) {
+        try {
+            return new ObjectMapper().writeValueAsString(o);
+        } catch ( JsonProcessingException e ) {
+            log.error("Exception occurred while writing as String value  : {}, Cause : {}", o, e.getMessage());
+            return e.getMessage();
+        }
     }
 
 }
